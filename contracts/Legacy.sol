@@ -5,7 +5,8 @@ import "hardhat/console.sol";
 
 contract Legacy {
     address public owner;
-    address[] public legaties;
+    address[] public legatiesAdresses;
+    mapping(address => uint) public legacyDistribution;
 
     constructor() {
         owner = msg.sender;
@@ -16,12 +17,12 @@ contract Legacy {
         _;
     }
 
-    function addLegatee( address _legatee ) public onlyOwner {
-        console.log(_legatee);
-        legaties.push( _legatee );
+    function addLegatee(address _legatee) public onlyOwner {
+        legatiesAdresses.push(_legatee);
+        legacyDistribution[_legatee] = 0;
     }
 
-    function getLegaties() public view onlyOwner returns ( address[] memory ) {
-        return legaties;
+    function getLegaties() public view onlyOwner returns (address[] memory) {
+        return legatiesAdresses;
     }
 }
