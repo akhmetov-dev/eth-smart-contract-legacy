@@ -1,14 +1,32 @@
 import { expect } from "chai";
 import hre from "hardhat";
-import { time } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 
 describe("Legacy", function () {
-  
-  it("Should add a legatee", async function () {
-    const legacy = await hre.ethers.deployContract( "Legacy", [] );
 
-    expect( (await legacy.getLegaties()).length ).to.equal(0);
-    await legacy.addLegatee( "0x0000000000000000000011111111111111111111" );
-    expect( (await legacy.getLegaties()).length ).to.equal(1);
+  async function beforeEach() {
+    const legacy = await hre.ethers.deployContract("Legacy", []);
+    const legateeAddress = "0x0000000000000000000000000000000000000001";
+
+    return { legacy, legateeAddress };
+  }
+
+  it("should add a legatee", async function () {
+    const { legacy, legateeAddress } = await loadFixture(beforeEach);
+
+    expect((await legacy.getLegaties()).length).to.equal(0);
+    await legacy.addLegatee(legateeAddress);
+
+    const legaties = await legacy.getLegaties();
+    expect(legaties.length).to.equal(1);
+  });
+
+  it("should return legaties", async function () {
+    const { legacy, legateeAddress } = await loadFixture(beforeEach);
+
+    await legacy.addLegatee(legateeAddress);
+
+    const legaties = await legacy.getLegaties();
+    expect(legaties[0]).to.equal(legateeAddress);
   });
 });
