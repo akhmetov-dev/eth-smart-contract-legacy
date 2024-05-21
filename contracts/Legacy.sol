@@ -10,6 +10,7 @@ contract Legacy {
 
     event LegateeAdded(address legatee, uint8 distribution);
     event LegateeRemoved(address legatee);
+    event FundsDeposited(address sender, uint amount);
 
     constructor() {
         owner = msg.sender;
@@ -49,6 +50,7 @@ contract Legacy {
 
     function deposit() public payable onlyOwner {
         require(msg.value > 0, "Deposit value must be greater than 0");
+        emit FundsDeposited(msg.sender, msg.value);
     }
 
     function getBalance() public view returns (uint) {
