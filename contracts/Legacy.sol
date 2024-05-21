@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract Legacy {
     address public owner;
-    address[] public legatiesAdresses;
+    address[] public legatees;
     mapping(address => uint) public legacyDistribution;
+
+    event LegateeAdded(address legatee, uint distribution);
 
     constructor() {
         owner = msg.sender;
@@ -18,11 +20,11 @@ contract Legacy {
     }
 
     function addLegatee(address _legatee) public onlyOwner {
-        legatiesAdresses.push(_legatee);
-        legacyDistribution[_legatee] = 0;
+        legatees.push(_legatee);
+        emit LegateeAdded(_legatee, legacyDistribution[_legatee]);
     }
 
-    function getLegaties() public view onlyOwner returns (address[] memory) {
-        return legatiesAdresses;
+    function getLegatees() public view onlyOwner returns (address[] memory) {
+        return legatees;
     }
 }
