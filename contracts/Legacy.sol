@@ -38,12 +38,20 @@ contract Legacy {
         emit LegateeRemoved(_legatee);
     }
 
-    function findLegateeAddressIndex(address _address) internal view returns (uint) {
+    function findLegateeAddressIndex(address _address) private view returns (uint) {
         for (uint i = 0; i < legatees.length; i++) {
             if (legatees[i] == _address) {
                 return i;
             }
         }
         revert("Legatee not found");
+    }
+
+    function deposit() public payable onlyOwner {
+        require(msg.value > 0, "Deposit value must be greater than 0");
+    }
+
+    function getBalance() public view returns (uint) {
+        return address(this).balance;
     }
 }

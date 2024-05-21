@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import hre from "hardhat";
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { ethers } from "hardhat";
 
 describe("Legacy", function () {
 
@@ -58,4 +59,19 @@ describe("Legacy", function () {
     await legacy.addLegatee(legateeAddress);
     expect(legacy.connect(another).removeLegatee(another)).to.be.revertedWith("Legatee not found");
   });
+
+  it("should deposit funds", async function () {
+    const { legacy } = await loadFixture(deployLegacyFixture);
+
+    expect(await legacy.getBalance()).to.equal(0);
+    await legacy.deposit({ value: 1 });
+    expect(await legacy.getBalance()).to.equal(1);
+  });
+
+  it("should not deposit a non-owner", async function () {
+    const { legacy, another } = await loadFixture(deployLegacyFixture);
+
+    expect(legacy.connect(another).deposit({ value: 1 })).to.be.revertedWith("You aren't the owner");
+  });
+
 });
