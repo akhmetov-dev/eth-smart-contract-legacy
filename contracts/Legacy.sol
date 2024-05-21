@@ -6,10 +6,10 @@ pragma solidity ^0.8.24;
 contract Legacy {
     address public owner;
     address[] public legatees;
-    mapping(address => uint) public legacyDistribution;
+    mapping(address => uint8) public legacyDistribution;
 
-    event LegateeAdded(address legatee, uint distribution);
-    event LegateeRemoved(address legatee, uint distribution);
+    event LegateeAdded(address legatee, uint8 distribution);
+    event LegateeRemoved(address legatee);
 
     constructor() {
         owner = msg.sender;
@@ -30,6 +30,20 @@ contract Legacy {
     }
 
     function removeLegatee(address _legatee) public onlyOwner {
-        
+        uint index = findLegateeAddressIndex(_legatee);
+        require(index < legatees.length, "Legatee not found");
+        legacyDistribution[_legatee] = 0;
+        legatees[index] = legatees[legatees.length - 1];
+        legatees.pop();
+        emit LegateeRemoved(_legatee);
+    }
+
+    function findLegateeAddressIndex(address _address) internal view returns (uint) {
+        for (uint i = 0; i < legatees.length; i++) {
+            if (legatees[i] == _address) {
+                return i;
+            }
+        }
+        revert("Legatee not found");
     }
 }
