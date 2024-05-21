@@ -9,6 +9,7 @@ contract Legacy {
     mapping(address => uint) public legacyDistribution;
 
     event LegateeAdded(address legatee, uint distribution);
+    event LegateeRemoved(address legatee, uint distribution);
 
     constructor() {
         owner = msg.sender;
@@ -26,5 +27,9 @@ contract Legacy {
 
     function getLegatees() public view onlyOwner returns (address[] memory) {
         return legatees;
+    }
+
+    function removeLegatee(address _legatee) public onlyOwner {
+        
     }
 }
