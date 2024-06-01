@@ -16,8 +16,7 @@ describe("Legacy", function () {
   it("should set the correct owner", async function () {
     const { legacy, owner } = await loadFixture(deployLegacyFixture);
 
-    const contractOwner = await legacy.owner();
-    expect(contractOwner).to.equal(owner.address);
+    expect(await legacy.owner()).to.equal(owner.address);
   });
 
   it("should add a legatee", async function () {
@@ -34,7 +33,7 @@ describe("Legacy", function () {
   it("should not add a legatee by non-owner", async function () {
     const { legacy, legateeAddress, another } = await loadFixture(deployLegacyFixture);
 
-    expect(legacy.connect(another).addLegatee(legateeAddress)).to.be.revertedWith("You aren't the owner");
+    await expect(legacy.connect(another).addLegatee(legateeAddress)).to.be.revertedWith("You aren't the owner");
   });
 
   it("should remove a legatee", async function () {
@@ -50,14 +49,14 @@ describe("Legacy", function () {
     const { legacy, legateeAddress, another } = await loadFixture(deployLegacyFixture);
 
     await legacy.addLegatee(legateeAddress);
-    expect(legacy.connect(another).removeLegatee(legateeAddress)).to.be.revertedWith("You aren't the owner");
+    await expect(legacy.connect(another).removeLegatee(legateeAddress)).to.be.revertedWith("You aren't the owner");
   });
 
   it("should not remove non existing legatee", async function () {
     const { legacy, legateeAddress, another } = await loadFixture(deployLegacyFixture);
 
     await legacy.addLegatee(legateeAddress);
-    expect(legacy.connect(another).removeLegatee(another)).to.be.revertedWith("Legatee not found");
+    await expect(legacy.removeLegatee(another)).to.be.revertedWith("Legatee not found");
   });
 
   it("should deposit funds", async function () {
@@ -71,7 +70,30 @@ describe("Legacy", function () {
   it("should not deposit a non-owner", async function () {
     const { legacy, another } = await loadFixture(deployLegacyFixture);
 
-    expect(legacy.connect(another).deposit({ value: 1 })).to.be.revertedWith("You aren't the owner");
+    await expect(legacy.connect(another).deposit({ value: 1 })).to.be.revertedWith("You aren't the owner");
+  });
+
+  it("should set distribution", async function () {
+    const { legacy, legateeAddress } = await loadFixture(deployLegacyFixture);
+
+    await legacy.addLegatee(legateeAddress);
+    expect(await legacy.getDistribution(legateeAddress)).to.equal(0);
+
+    await legacy.setDistribution(legateeAddress, 1);
+    expect(await legacy.getDistribution(legateeAddress)).to.equal(1);
+  });
+
+  it("should not set distribution for non existing legatee", async function () {
+    const { legacy, legateeAddress, another } = await loadFixture(deployLegacyFixture);
+
+    await legacy.addLegatee(legateeAddress);
+    await expect(legacy.setDistribution(another, 1)).to.be.revertedWith("Legatee not found");
+  });
+
+  it("should not set distribution by non-owner", async function () {
+    const { legacy, legateeAddress, another } = await loadFixture(deployLegacyFixture);
+
+    await expect(legacy.connect(another).setDistribution(legateeAddress, 1)).to.be.revertedWith("You aren't the owner");
   });
 
 });

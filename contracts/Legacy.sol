@@ -45,7 +45,7 @@ contract Legacy {
                 return i;
             }
         }
-        revert("Legatee not found");
+        return type(uint).max;
     }
 
     function deposit() public payable onlyOwner {
@@ -55,5 +55,17 @@ contract Legacy {
 
     function getBalance() public view returns (uint) {
         return address(this).balance;
+    }
+
+    function getDistribution(address _legatee) public view onlyOwner returns (uint) {
+        uint index = findLegateeAddressIndex(_legatee);
+        require(index < legatees.length, "Legatee not found");
+        return legacyDistribution[_legatee];
+    }
+
+    function setDistribution(address _legatee, uint8 _distribution) public onlyOwner {
+        uint index = findLegateeAddressIndex(_legatee);
+        require(index < legatees.length, "Legatee not found");
+        legacyDistribution[_legatee] = _distribution;
     }
 }
