@@ -10,7 +10,7 @@ contract Legacy {
 
     event LegateeAdded(address legatee, uint8 distribution);
     event LegateeRemoved(address legatee);
-    event FundsDeposited(address sender, uint amount);
+    event FundsDeposited(address owner, uint amount);
 
     constructor() {
         owner = msg.sender;
