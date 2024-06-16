@@ -96,4 +96,23 @@ describe("Legacy", function () {
     await expect(legacy.connect(another).setDistribution(legateeAddress, 1)).to.be.revertedWith("You aren't the owner");
   });
 
+  it("should be closed for distribution by default", async function () {
+    const { legacy } = await loadFixture(deployLegacyFixture);
+
+    expect(await legacy.legacyCanBeDistributed()).to.equal(false);
+  });
+
+  it("should be opened for distribution by owner", async function () {
+    const { legacy } = await loadFixture(deployLegacyFixture);
+
+    await legacy.allowLegacyDistributionByOwner();
+
+    expect(await legacy.legacyCanBeDistributed()).to.equal(true);
+  });
+
+  it("should not be opened for distribution by non owner", async function () {
+    const { legacy, another } = await loadFixture(deployLegacyFixture);
+
+    await expect(legacy.connect(another).allowLegacyDistributionByOwner()).to.be.revertedWith("You aren't the owner");
+  });
 });
