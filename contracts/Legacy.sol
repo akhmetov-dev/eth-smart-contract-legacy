@@ -5,14 +5,14 @@ pragma solidity ^0.8.24;
 
 contract Legacy {
     address public owner;
-    address[] public legatees;
+    address[] private legatees;
 
     struct Legatee{
         uint8 distribution;
         bool legacyCanBeDistributed;
     }
 
-    mapping(address => Legatee) public legacyDistribution;
+    mapping(address => Legatee) private legacyDistribution;
     bool public legacyCanBeDistributed;
 
     event LegateeAdded(address legatee, uint8 distribution);
@@ -30,8 +30,7 @@ contract Legacy {
     }
 
     modifier onlyLegatee() {
-        uint index = findLegateeAddressIndex(msg.sender);
-        require(index < legatees.length, "Legatee not found");
+        require(findLegateeAddressIndex(msg.sender) < legatees.length, "Legatee not found");
         _;
     }
 
@@ -76,14 +75,12 @@ contract Legacy {
     }
 
     function getDistribution(address _legatee) public view onlyOwner returns (uint) {
-        uint index = findLegateeAddressIndex(_legatee);
-        require(index < legatees.length, "Legatee not found");
+        require(findLegateeAddressIndex(_legatee) < legatees.length, "Legatee not found");
         return legacyDistribution[_legatee].distribution;
     }
 
     function setDistribution(address _legatee, uint8 _distribution) public onlyOwner {
-        uint index = findLegateeAddressIndex(_legatee);
-        require(index < legatees.length, "Legatee not found");
+        require(findLegateeAddressIndex(_legatee) < legatees.length, "Legatee not found");
         legacyDistribution[_legatee].distribution = _distribution;
     }
 
@@ -93,7 +90,6 @@ contract Legacy {
     }
 
     function allowLegacyDistributionByLegateesConsensus() public onlyLegatee {
-        // TODO unit-tests
         legacyDistribution[msg.sender].legacyCanBeDistributed = true;
 
         uint votedLegateesCount = countVotedLegatees();
