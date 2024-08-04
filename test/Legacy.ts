@@ -6,11 +6,25 @@ import { ethers } from "hardhat";
 describe("Legacy", function () {
 
   async function deployLegacyFixture() {
-    const [owner, another] = await hre.ethers.getSigners();
     const legacy = await hre.ethers.deployContract("Legacy", []);
-    const legateeAddress = "0x0000000000000000000000000000000000000001";
+    const [
+      owner, 
+      another,
+      legateeAddress,
+      legateeAddress2,
+      legateeAddress3,
+      legateeAddress4
+    ] = await hre.ethers.getSigners();
 
-    return { legacy, legateeAddress, owner, another };
+    return {
+      legacy,
+      owner,
+      another,
+      legateeAddress,
+      legateeAddress2,
+      legateeAddress3,
+      legateeAddress4
+    };
   }
 
   it("should set the correct owner", async function () {
@@ -114,5 +128,67 @@ describe("Legacy", function () {
     const { legacy, another } = await loadFixture(deployLegacyFixture);
 
     await expect(legacy.connect(another).allowLegacyDistributionByOwner()).to.be.revertedWith("You aren't the owner");
+  });
+
+  it("should be opened for distribution by legatees consensus (1 legatee)", async function () {
+    const {
+      legacy,
+      legateeAddress
+    } = await loadFixture(deployLegacyFixture);
+
+    await legacy.addLegatee(legateeAddress);
+
+    expect(await legacy.legacyCanBeDistributed()).to.equal(false);
+
+    await legacy.connect(legateeAddress).allowLegacyDistributionByLegateesConsensus();
+    expect(await legacy.legacyCanBeDistributed()).to.equal(true);
+  });
+
+  it("should be opened for distribution by legatees consensus (3 legatees)", async function () {
+    const {
+      legacy,
+      legateeAddress,
+      legateeAddress2,
+      legateeAddress3
+    } = await loadFixture(deployLegacyFixture);
+
+    await legacy.addLegatee(legateeAddress);
+    await legacy.addLegatee(legateeAddress2);
+    await legacy.addLegatee(legateeAddress3);
+
+    expect(await legacy.legacyCanBeDistributed()).to.equal(false);
+
+    await legacy.connect(legateeAddress).allowLegacyDistributionByLegateesConsensus();
+    expect(await legacy.legacyCanBeDistributed()).to.equal(false);
+
+    await legacy.connect(legateeAddress2).allowLegacyDistributionByLegateesConsensus();
+    expect(await legacy.legacyCanBeDistributed()).to.equal(true);
+  });
+
+  it("should be opened for distribution by legatees consensus (4 legatees)", async function () {
+
+    const {
+      legacy,
+      legateeAddress,
+      legateeAddress2,
+      legateeAddress3,
+      legateeAddress4
+    } = await loadFixture(deployLegacyFixture);
+
+    await legacy.addLegatee(legateeAddress);
+    await legacy.addLegatee(legateeAddress2);
+    await legacy.addLegatee(legateeAddress3);
+    await legacy.addLegatee(legateeAddress4);
+
+    expect(await legacy.legacyCanBeDistributed()).to.equal(false);
+
+    await legacy.connect(legateeAddress).allowLegacyDistributionByLegateesConsensus();
+    expect(await legacy.legacyCanBeDistributed()).to.equal(false);
+
+    await legacy.connect(legateeAddress2).allowLegacyDistributionByLegateesConsensus();
+    expect(await legacy.legacyCanBeDistributed()).to.equal(false);
+
+    await legacy.connect(legateeAddress3).allowLegacyDistributionByLegateesConsensus();
+    expect(await legacy.legacyCanBeDistributed()).to.equal(true);
   });
 });

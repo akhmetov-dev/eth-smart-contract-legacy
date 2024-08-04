@@ -92,11 +92,23 @@ contract Legacy {
     function allowLegacyDistributionByLegateesConsensus() public onlyLegatee {
         legacyDistribution[msg.sender].legacyCanBeDistributed = true;
 
+        uint legateesCount = legatees.length;
         uint votedLegateesCount = countVotedLegatees();
-        if(votedLegateesCount > ((legatees.length / 2) + 1)) {
-            legacyCanBeDistributed = true;
-            emit LegacyCanBeDistributed(legatees);
+
+        if (legateesCount == 1 || legateesCount == 2) {
+            if (votedLegateesCount == 1) {
+                legacyCanBeDistributed = true;
+            }
+        } else if (legateesCount == 3) {
+            if (votedLegateesCount == 2) {
+                legacyCanBeDistributed = true;
+            }
+        } else {
+            if(votedLegateesCount > (legateesCount / 2 + (legateesCount % 2 == 0 ? 0 : 1))) {
+                legacyCanBeDistributed = true;
+            }
         }
+        emit LegacyCanBeDistributed(legatees);
     }
 
     function countVotedLegatees() private view returns (uint) {
