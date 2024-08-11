@@ -94,19 +94,8 @@ contract Legacy {
 
         uint legateesCount = legatees.length;
         uint votedLegateesCount = countVotedLegatees();
-
-        if (legateesCount == 1 || legateesCount == 2) {
-            if (votedLegateesCount == 1) {
-                legacyCanBeDistributed = true;
-            }
-        } else if (legateesCount == 3) {
-            if (votedLegateesCount == 2) {
-                legacyCanBeDistributed = true;
-            }
-        } else {
-            if(votedLegateesCount > (legateesCount / 2 + (legateesCount % 2 == 0 ? 0 : 1))) {
-                legacyCanBeDistributed = true;
-            }
+        if(votedLegateesCount >= (legateesCount / 2 + (legateesCount % 2 == 0 ? 0 : 1))) {
+            legacyCanBeDistributed = true;
         }
         emit LegacyCanBeDistributed(legatees);
     }

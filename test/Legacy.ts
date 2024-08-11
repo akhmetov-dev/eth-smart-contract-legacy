@@ -13,7 +13,8 @@ describe("Legacy", function () {
       legateeAddress,
       legateeAddress2,
       legateeAddress3,
-      legateeAddress4
+      legateeAddress4,
+      legateeAddress5
     ] = await hre.ethers.getSigners();
 
     return {
@@ -23,7 +24,8 @@ describe("Legacy", function () {
       legateeAddress,
       legateeAddress2,
       legateeAddress3,
-      legateeAddress4
+      legateeAddress4,
+      legateeAddress5
     };
   }
 
@@ -165,20 +167,22 @@ describe("Legacy", function () {
     expect(await legacy.legacyCanBeDistributed()).to.equal(true);
   });
 
-  it("should be opened for distribution by legatees consensus (4 legatees)", async function () {
+  it("should be opened for distribution by legatees consensus (5 legatees)", async function () {
 
     const {
       legacy,
       legateeAddress,
       legateeAddress2,
       legateeAddress3,
-      legateeAddress4
+      legateeAddress4,
+      legateeAddress5
     } = await loadFixture(deployLegacyFixture);
 
     await legacy.addLegatee(legateeAddress);
     await legacy.addLegatee(legateeAddress2);
     await legacy.addLegatee(legateeAddress3);
     await legacy.addLegatee(legateeAddress4);
+    await legacy.addLegatee(legateeAddress5);
 
     expect(await legacy.legacyCanBeDistributed()).to.equal(false);
 
