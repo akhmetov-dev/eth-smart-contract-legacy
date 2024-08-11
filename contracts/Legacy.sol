@@ -109,4 +109,15 @@ contract Legacy {
         }
         return votedLegateesCount;
     }
+
+    function claimLegacy() public onlyLegatee {
+        address legateeAddress = msg.sender;
+
+        uint8 distribution = legacyDistribution[legateeAddress].distribution;
+        uint legacyAmount = address(this).balance / 100 * distribution;
+
+        (bool sent, ) = legateeAddress.call{value: legacyAmount}("");
+
+        require(sent, "Failed to claim legacy");
+    }
 }

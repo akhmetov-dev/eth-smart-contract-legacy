@@ -5,6 +5,8 @@ import { ethers } from "hardhat";
 
 describe("Legacy", function () {
 
+  const ONE_ETHER_IN_WEI = 1000000000000000000n;
+
   async function deployLegacyFixture() {
     const legacy = await hre.ethers.deployContract("Legacy", []);
     const [
@@ -194,5 +196,25 @@ describe("Legacy", function () {
 
     await legacy.connect(legateeAddress3).allowLegacyDistributionByLegateesConsensus();
     expect(await legacy.legacyCanBeDistributed()).to.equal(true);
+  });
+
+  it("should send legacy to legatee", async function () {
+    const { legacy, legateeAddress } = await loadFixture(deployLegacyFixture);
+
+    var legateeBalance = await hre.ethers.provider.getBalance(legateeAddress);
+
+    legacy.deposit({ value: ONE_ETHER_IN_WEI });
+
+    await legacy.addLegatee(legateeAddress);
+
+    await legacy.setDistribution(legateeAddress, 100);
+
+    await legacy.connect(legateeAddress).allowLegacyDistributionByLegateesConsensus();
+
+    await legacy.connect(legateeAddress).claimLegacy();
+
+    var newLegateeBalance = await hre.ethers.provider.getBalance(legateeAddress);
+
+    expect(newLegateeBalance).to.greaterThanOrEqual(legateeBalance);
   });
 });
