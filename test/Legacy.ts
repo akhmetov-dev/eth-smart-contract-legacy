@@ -5,7 +5,7 @@ import { ethers } from "hardhat";
 
 describe("Legacy", function () {
 
-  const ONE_ETHER_IN_WEI = 1000000000000000000n;
+  const ONE_ETHER_IN_WEI = 1_000_000_000_000_000_000n;
 
   async function deployLegacyFixture() {
     const legacy = await hre.ethers.deployContract("Legacy", []);

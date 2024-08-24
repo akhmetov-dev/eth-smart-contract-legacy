@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.24;
 
 // import "hardhat/console.sol";
@@ -19,6 +19,7 @@ contract Legacy {
     event LegateeRemoved(address legatee);
     event FundsDeposited(address owner, uint amount);
     event LegacyCanBeDistributed(address[] legatees);
+    event LegacyClaimed(address legateeAddress);
 
     constructor() {
         owner = msg.sender;
@@ -119,5 +120,7 @@ contract Legacy {
         (bool sent, ) = legateeAddress.call{value: legacyAmount}("");
 
         require(sent, "Failed to claim legacy");
+
+        emit LegacyClaimed(legateeAddress);
     }
 }
