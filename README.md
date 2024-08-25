@@ -8,3 +8,5 @@ This is a smart contract, that provides an opportunity to allocate legacy to leg
 ```npx hardhat node```
 # deploy smart contract on local network
 ```npx hardhat ignition deploy ignition/modules/LegacyModule.ts --network localhost```
+# execute ethers.js scripts on blockchain
+```npx hardhat run scripts/TestLegacyWithEtherJs.ts --network localhost```
