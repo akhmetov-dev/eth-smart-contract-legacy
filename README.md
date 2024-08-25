@@ -4,3 +4,7 @@ This is a smart contract, that provides an opportunity to allocate legacy to leg
 ```npx hardhat compile```
 # run tests
 ```npx hardhat test```
+# start local network
+```npx hardhat node```
+# deploy smart contract on local network
+```npx hardhat node```

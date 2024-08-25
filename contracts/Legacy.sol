@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.24;
 
-// import "hardhat/console.sol";
-
 contract Legacy {
     address public owner;
     address[] private legatees;
