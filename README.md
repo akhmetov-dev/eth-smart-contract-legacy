@@ -7,4 +7,4 @@ This is a smart contract, that provides an opportunity to allocate legacy to leg
 # start local network
 ```npx hardhat node```
 # deploy smart contract on local network
-```npx hardhat node```
+```npx hardhat ignition deploy ignition/modules/LegacyModule.ts --network localhost```
